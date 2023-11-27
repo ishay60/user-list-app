@@ -18,35 +18,33 @@ const UsersContainer = styled.div`
   background-color: rgb(236, 228, 228);
 `;
 const PostsAndTodosContainer = styled.div`
+  position: sticky;
+  top: 0;
+  height: 100vh; // This will make the container as tall as the viewport
+  overflow-y: auto; // This will add a scrollbar to the container if the content is taller than the container
   width: 50%;
   padding: 20px;
   background-color: rgb(236, 228, 228);
 `;
 const MoreData = styled.div`
-  display: none;
-  position: absolute;
+  display: ${(props) => (props.showMoreData ? "flex" : "none")};
+  flex-direction: column;
+  width: 100%;
   background-color: rgb(236, 228, 228);
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+
   padding: 12px 16px;
   z-index: 1;
 `;
 const UserItem = styled.li`
+  display: flex;
+  flex-direction: column;
   list-style: none;
-  border: 1px solid ${(props) => (props.hasTodos ? "red" : "green")};
+  border: 10px solid ${(props) => (props.hasTodos ? "red" : "green")};
   margin: 10px 0;
   padding: 10px;
   border: 1px solid #ced4da;
   border-radius: 4px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: left;
-
-  &:hover ${MoreData} {
-    display: block;
-  }
 `;
 
 const Button = styled.button`
@@ -66,8 +64,27 @@ const DeleteButton = styled(Button)`
   background-color: #dc3545;
 `;
 
+const UserActionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: space-between;
+  align-items: flex-end;
+`;
 const MoreDataButton = styled(Button)`
   background-color: #28a745;
+`;
+const UpdateDeleteContainer = styled.div`
+  justify-content: flex-end;
+`;
+
+const MoreDataContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 `;
 
 const Users = () => {
@@ -75,6 +92,7 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [hasTodos, setHasTodos] = useState(false);
+  const [showMoreData, setShowMoreData] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -167,46 +185,72 @@ const Users = () => {
                     />
                     <br />
                     <br />
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+
+                    <UserActionsContainer
+                      onMouseLeave={() => {
+                        timeoutId = setTimeout(() => {
+                          setShowMoreData({
+                            ...showMoreData,
+                            [user.id]: false,
+                          });
+                        }); // delay in milliseconds
                       }}
                     >
-                      <div>
-                        <MoreDataButton>More Data</MoreDataButton>
-                        <MoreData>
+                      <MoreDataContainer>
+                        <MoreData showMoreData={showMoreData[user.id]}>
+                          <h3>Street:</h3>{" "}
                           <input
                             type="text"
                             defaultValue={user.address.street}
                             placeholder="Street"
                           />
+                          <h3>City:</h3>{" "}
                           <input
                             type="text"
                             defaultValue={user.address.city}
                             placeholder="City"
                           />
+                          <h3>Zipcode:</h3>{" "}
                           <input
                             type="text"
                             defaultValue={user.address.zipcode}
                             placeholder="Zip Code"
                           />
                         </MoreData>
-                      </div>
-                      <div>
-                        <UpdateButton
-                          onClick={() => handleUpdate(event, user.id)}
+                        <ButtonContainer
+                          onMouseEnter={() => {
+                            setShowMoreData({
+                              ...showMoreData,
+                              [user.id]: true,
+                            });
+                          }}
                         >
-                          Update
-                        </UpdateButton>
+                          <MoreDataButton
+                            onMouseEnter={() =>
+                              setShowMoreData({
+                                ...showMoreData,
+                                [user.id]: true,
+                              })
+                            }
+                          >
+                            More Data
+                          </MoreDataButton>
+                          <UpdateDeleteContainer>
+                            <UpdateButton
+                              onClick={(event) => handleUpdate(event, user.id)}
+                            >
+                              Update
+                            </UpdateButton>
 
-                        <DeleteButton
-                          onClick={() => handleDelete(event, user.id)}
-                        >
-                          Delete
-                        </DeleteButton>
-                      </div>
-                    </div>
+                            <DeleteButton
+                              onClick={(event) => handleDelete(event, user.id)}
+                            >
+                              Delete
+                            </DeleteButton>
+                          </UpdateDeleteContainer>
+                        </ButtonContainer>
+                      </MoreDataContainer>
+                    </UserActionsContainer>
                   </form>
                 </UserItem>
               );
