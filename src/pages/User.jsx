@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link, Outlet } from 'react-router-dom';
-import { getItem } from '../utils';
+import { useState, useEffect } from "react";
+import { getItem } from "../utils";
 
-const USERS_URL = 'https://jsonplaceholder.typicode.com/users';
+const USERS_URL = "https://jsonplaceholder.typicode.com/users";
 
 const User = () => {
   const [user, setUser] = useState({});
@@ -24,8 +23,6 @@ const User = () => {
       <strong>Email:</strong> {user.email} <br />
       <strong>City:</strong> {user.address?.city} <br />
       {/* Ex8_2 */}
-      <Link to='posts'>Posts</Link> <Link to='todos'>Todos</Link>
-      <Outlet />
     </>
   );
 };
