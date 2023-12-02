@@ -22,7 +22,7 @@ const Users = () => {
     clearTimeout(timeoutId);
   };
 
-  const handleMouseEnter = (userId) => {
+  const handleEnterUserForm = (userId) => {
     closeOtherUsers(userId);
     setSelectedUser(userId);
   };
@@ -104,7 +104,7 @@ const Users = () => {
                 <UserItem
                   bordercolor={hasTodos.valueOf.toString()}
                   key={user.id}
-                  onMouseEnter={() => handleMouseEnter(user.id)}
+                  onMouseEnter={() => handleEnterUserForm(user.id)}
                 >
                   <h3>
                     id: {user.id}
