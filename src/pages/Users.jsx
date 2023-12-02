@@ -4,7 +4,7 @@ import styled from "styled-components";
 import SearchBar from "./SearchBar";
 import Todos from "./Todos";
 import Posts from "./Posts";
-import UserForm from "./UserForm";
+import UserForm from "../components/UserForm";
 
 const USERS_URL = "https://jsonplaceholder.typicode.com/users";
 
@@ -14,7 +14,30 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [hasTodos, setHasTodos] = useState(false);
   const [showMoreData, setShowMoreData] = useState({});
+
   let timeoutId = null;
+
+  const showUserMoreData = (userId) => {
+    setShowMoreData({ ...showMoreData, [userId]: true });
+    clearTimeout(timeoutId);
+  };
+
+  const handleMouseEnter = (userId) => {
+    closeOtherUsers(userId);
+    setSelectedUser(userId);
+  };
+
+  const closeOtherUsers = (userId) => {
+    timeoutId = setTimeout(() => {
+      setShowMoreData((prev) => {
+        console.log({ prev, userId });
+        if (prev?.[userId]) {
+          return prev;
+        }
+        setShowMoreData({});
+      });
+    }, 0);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,10 +77,6 @@ const Users = () => {
       console.error(error);
     }
   };
-  const handleMouseOver = (userId) => {
-    console.log(userId);
-    setSelectedUser(userId);
-  };
 
   const handleDelete = async (userId) => {
     event.preventDefault();
@@ -85,25 +104,18 @@ const Users = () => {
                 <UserItem
                   bordercolor={hasTodos.valueOf.toString()}
                   key={user.id}
-                  onMouseOver={() => handleMouseOver(user.id)}
+                  onMouseEnter={() => handleMouseEnter(user.id)}
                 >
                   <h3>
                     id: {user.id}
                     <br />
                   </h3>
 
-                  <UserForm
-                    user={user}
-                    showMoreData={showMoreData}
-                    setShowMoreData={setShowMoreData}
-                  />
+                  <UserForm user={user} showMoreData={showMoreData} />
                   <ButtonsContainer>
                     <MoreDataButtonContainer>
                       <MoreDataButton
-                        onMouseEnter={() => {
-                          setShowMoreData({ ...showMoreData, [user.id]: true });
-                          clearTimeout(timeoutId);
-                        }}
+                        onMouseEnter={() => showUserMoreData(user.id)}
                       >
                         More Data
                       </MoreDataButton>
