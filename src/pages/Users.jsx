@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import Todos from "./Todos";
 import Posts from "./Posts";
 import UserForm from "../components/UserForm";
+import { updateUser } from "../services/api";
 
 const USERS_URL = "https://jsonplaceholder.typicode.com/users";
 
@@ -14,6 +15,15 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [hasTodos, setHasTodos] = useState(false);
   const [showMoreData, setShowMoreData] = useState({});
+
+  const [currentUsersData, setCurrentUsersData] = useState({});
+
+  const onChangeField = (userId, field, value) => {
+    setCurrentUsersData((prev) => ({
+      ...prev,
+      [userId]: { ...prev?.[userId], [field]: value },
+    }));
+  };
 
   let timeoutId = null;
 
@@ -42,39 +52,34 @@ const Users = () => {
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await getAll(USERS_URL);
-      console.log(data);
       setUsers(data);
+      setCurrentUsersData(
+        data.reduce((acc, user) => {
+          acc[user.id] = user;
+          return acc;
+        }, {})
+      );
     };
     fetchData();
   }, []);
 
-  const handleSearch = (search) => {
-    setSearchTerm(search);
-  };
-
   const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase())
   );
-  const handleUpdate = async (userId) => {
+
+  const handleUpdate = async (event, userId) => {
     event.preventDefault();
-    // Find the user
-    const user = users.find((user) => user.id === userId);
 
-    // Update the user
-    const updatedUser = { ...user, username: "New Username" };
-
+    const updatedUser = currentUsersData?.[userId];
+    console.log("UPDATED USER", updatedUser);
+    if (!updatedUser) {
+      return;
+    }
     // Send a PUT request to the API
-    try {
-      const response = await updateItem(USERS_URL, userId, updatedUser);
-
-      // Update the state
-      if (response.status === 200) {
-        setUsers(
-          users.map((user) => (user.id === userId ? updatedUser : user))
-        );
-      }
-    } catch (error) {
-      console.error(error);
+    const response = await updateUser(USERS_URL, userId, updatedUser);
+    // Update the state
+    if (response) {
+      setUsers(users.map((user) => (user.id === userId ? updatedUser : user)));
     }
   };
 
@@ -97,38 +102,44 @@ const Users = () => {
     <>
       <FlexBoxContainer>
         <UsersContainer>
-          <SearchBar handleSearch={handleSearch} />
+          <SearchBar handleSearch={setSearchTerm} />
           <ul>
             {filteredUsers.map((user) => {
+              const { id: userId } = user || {};
               return (
                 <UserItem
                   bordercolor={hasTodos.valueOf.toString()}
-                  key={user.id}
-                  onMouseEnter={() => handleEnterUserForm(user.id)}
+                  key={userId}
+                  onMouseEnter={() => handleEnterUserForm(userId)}
                 >
                   <h3>
-                    id: {user.id}
+                    id: {userId}
                     <br />
                   </h3>
 
-                  <UserForm user={user} showMoreData={showMoreData} />
+                  <UserForm
+                    user={user}
+                    showMoreData={showMoreData}
+                    userData={currentUsersData?.[userId]}
+                    onChangeField={onChangeField}
+                  />
                   <ButtonsContainer>
                     <MoreDataButtonContainer>
                       <MoreDataButton
-                        onMouseEnter={() => showUserMoreData(user.id)}
+                        onMouseEnter={() => showUserMoreData(userId)}
                       >
                         More Data
                       </MoreDataButton>
                     </MoreDataButtonContainer>
                     <UpdateDeleteContainer>
                       <UpdateButton
-                        onClick={(event) => handleUpdate(event, user.id)}
+                        onClick={(event) => handleUpdate(event, userId)}
                       >
                         Update
                       </UpdateButton>
 
                       <DeleteButton
-                        onClick={(event) => handleDelete(event, user.id)}
+                        onClick={(event) => handleDelete(event, userId)}
                       >
                         Delete
                       </DeleteButton>
