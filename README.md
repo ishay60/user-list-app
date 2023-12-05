@@ -4,7 +4,7 @@ This is a simple React application that displays a list of users.
 
 ## Prerequisites
 
-Before you begin, ensure you have met the following requirements:
+Before you begin, make sure you have met the following requirements:
 
 - You have installed the latest version of [Node.js and npm](https://nodejs.org/en/download/).
 - You have a Windows/Linux/Mac machine.
