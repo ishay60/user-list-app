@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { getUserItems } from "../utils/utils";
 
 const POSTS_URL = "https://jsonplaceholder.typicode.com/posts";

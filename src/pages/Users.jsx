@@ -101,11 +101,13 @@ const FlexBoxContainer = styled.div`
 `;
 
 const UsersContainer = styled.div`
+  font-family: "Roboto", sans-serif;
   width: 50%;
   padding: 20px;
   background-color: rgb(236, 228, 228);
 `;
 const PostsAndTodosContainer = styled.div`
+  font-family: "Roboto", sans-serif;
   position: sticky;
   top: 0;
   height: 100vh; // This will make the container as tall as the viewport
@@ -121,7 +123,6 @@ const UserItem = styled.li`
   list-style: none;
   margin: 10px 0;
   padding: 10px;
-  border: 1px solid ${(props) => (props.bordercolor ? "red" : "green")};
   border-radius: 10px;
 `;
 
