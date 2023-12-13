@@ -9,3 +9,4 @@ export const updateUser = async (url, id, updatedItem) => {
     console.log(error);
   }
 };
+export const deleteItem = (url, id) => axios.delete(`${url}/${id}`);

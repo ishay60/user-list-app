@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const UserForm = ({ showMoreData, userData, onChangeField }) => {
+  console.log("UserForm", { showMoreData, userData });
   const { id, name, email, address } = userData || {};
 
   const onChange = (event) => {
@@ -16,7 +17,6 @@ const UserForm = ({ showMoreData, userData, onChangeField }) => {
 
   return (
     <form>
-      <h3>UserForm</h3>
       <h3>Name:</h3>
       <input
         type="text"
@@ -64,7 +64,6 @@ const UserForm = ({ showMoreData, userData, onChangeField }) => {
           />
         </MoreDataContainer>
       </UserActionsContainer>
-      <h3>userFormEnd</h3>
     </form>
   );
 };
