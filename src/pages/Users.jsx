@@ -64,19 +64,21 @@ const Users = () => {
           <SearchBar handleSearch={setSearchTerm} />
 
           {filteredUsers.map((user) => (
-            <UserItem>
-              <SingleUser
-                user={user}
-                key={user.id}
-                currentUsersData={currentUsersData[user.id]}
-                onChangeField={onChangeField}
-                showMoreData={showMoreData}
-                setShowMoreData={setShowMoreData}
-                closeOtherUsers={closeOtherUsers}
-                setSelectedUser={setSelectedUser}
-                hasTodos={hasTodos}
-                timeoutId={timeoutId}
-              />
+            <UserItem key={user.id}>
+              <>
+                <SingleUser
+                  user={user}
+                  key={user.id}
+                  currentUsersData={currentUsersData[user.id]}
+                  onChangeField={onChangeField}
+                  showMoreData={showMoreData}
+                  setShowMoreData={setShowMoreData}
+                  closeOtherUsers={closeOtherUsers}
+                  setSelectedUser={setSelectedUser}
+                  hasTodos={hasTodos}
+                  timeoutId={timeoutId}
+                />
+              </>
             </UserItem>
           ))}
         </UsersContainer>
