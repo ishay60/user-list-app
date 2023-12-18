@@ -15,4 +15,19 @@ const getUserItems = async (url, userId) => {
   return titles;
 };
 
-export { getAll, getItem, updateItem, deleteItem, getUserItems };
+const addPostToServer = (url, post) => {
+  const formattedPost = {
+    ...post,
+    user: `$${post}$`,
+  };
+  return axios.post(url, formattedPost);
+};
+
+export {
+  getAll,
+  getItem,
+  updateItem,
+  deleteItem,
+  getUserItems,
+  addPostToServer,
+};
