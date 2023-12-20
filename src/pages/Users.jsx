@@ -4,7 +4,6 @@ import styled from "styled-components";
 import SearchBar from "./SearchBar";
 import Todos from "./Todos";
 import Posts from "./Posts";
-
 import SingleUser from "./SingleUser";
 
 export const USERS_URL = "https://jsonplaceholder.typicode.com/users";
@@ -125,5 +124,3 @@ const UserItem = styled.li`
   padding: 10px;
   border-radius: 10px;
 `;
-
-
