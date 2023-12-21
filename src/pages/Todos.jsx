@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
-import { getUserItems } from "../utils/utils";
 
 const TodoItem = styled.li`
   position: relative;
@@ -39,31 +37,8 @@ const CompleteButton = styled.button`
   background-color: #4caf50;
 `;
 
-const TODOS_URL = "https://jsonplaceholder.typicode.com/todos";
-
-const Todos = ({ userId, setHasTodos }) => {
-  const [todos, setTodos] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data: todosTemp } = await getUserItems(TODOS_URL, userId);
-      setTodos(todosTemp);
-      const allTodosCompleted = todosTemp.every((todo) => todo.completed);
-      setHasTodos(!allTodosCompleted);
-    };
-    fetchData();
-  }, [userId, setHasTodos]);
-
-  const markComplete = (id) => {
-    setTodos((prev) =>
-      prev.map((todo) => {
-        if (todo.id === id) {
-          return { ...todo, completed: true };
-        }
-        return todo;
-      })
-    );
-  };
+const Todos = ({ todos, setTodos, markComplete }) => {
+  console.log("todos", todos);
 
   return (
     <ul>

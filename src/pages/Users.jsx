@@ -5,8 +5,10 @@ import SearchBar from "./SearchBar";
 import Todos from "./Todos";
 import Posts from "./Posts";
 import SingleUser from "./SingleUser";
+import { getUserItems } from "../utils/utils";
 
 export const USERS_URL = "https://jsonplaceholder.typicode.com/users";
+export const TODOS_URL = "https://jsonplaceholder.typicode.com/todos";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -14,8 +16,9 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [hasTodos, setHasTodos] = useState(false);
   const [showMoreData, setShowMoreData] = useState({});
-
+  const [todos, setTodos] = useState([{}]);
   const [currentUsersData, setCurrentUsersData] = useState({});
+  const [selectedUserTodos, setSelectedUserTodos] = useState([]);
 
   const onChangeField = (userId, field, value) => {
     setCurrentUsersData((prev) => ({
@@ -37,6 +40,10 @@ const Users = () => {
       });
     }, 0);
   };
+  const fetchUserTodos = async (userId) => {
+    const { data: todos } = await getUserItems(TODOS_URL, userId);
+    setSelectedUserTodos(todos);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,14 +55,29 @@ const Users = () => {
           return acc;
         }, {})
       );
+      if (selectedUser) {
+        fetchUserTodos(selectedUser);
+      }
     };
     fetchData();
-  }, []);
+  }, [selectedUser]);
 
   const filteredUsers = users.filter((user) =>
     user?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase())
   );
-
+  const markComplete = (id) => {
+    setSelectedUserTodos(
+      selectedUserTodos.map((todo) => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            completed: !todo.completed,
+          };
+        }
+        return todo;
+      })
+    );
+  };
   return (
     <>
       <FlexBoxContainer>
@@ -83,7 +105,12 @@ const Users = () => {
         </UsersContainer>
         <PostsAndTodosContainer>
           {selectedUser && (
-            <Todos userId={selectedUser} setHasTodos={setHasTodos} />
+            <Todos
+              userId={selectedUser}
+              setHasTodos={setHasTodos}
+              todos={selectedUserTodos}
+              markComplete={markComplete}
+            />
           )}
           {selectedUser && <Posts userId={selectedUser} />}
         </PostsAndTodosContainer>
