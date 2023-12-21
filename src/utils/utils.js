@@ -12,7 +12,7 @@ const deleteItem = (url, id) => axios.delete(`${url}/${id}`);
 const getUserItems = async (url, userId) => {
   const { data } = await getAll(`${url}?userId=${userId}`);
   const titles = data.map((item) => item.title);
-  return titles;
+  return { data, titles };
 };
 
 const addPostToServer = (url, post) => {

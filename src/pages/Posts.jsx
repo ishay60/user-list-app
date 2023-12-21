@@ -10,7 +10,7 @@ const Posts = ({ userId }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const titles = await getUserItems(POSTS_URL, userId);
+      const { titles } = await getUserItems(POSTS_URL, userId);
       setPosts(titles);
     };
     fetchData();

@@ -43,10 +43,10 @@ const TODOS_URL = "https://jsonplaceholder.typicode.com/todos";
 
 const Todos = ({ userId, setHasTodos }) => {
   const [todos, setTodos] = useState([]);
-  console.log("todos", todos);
+
   useEffect(() => {
     const fetchData = async () => {
-      const todosTemp = await getUserItems(TODOS_URL, userId);
+      const { data: todosTemp } = await getUserItems(TODOS_URL, userId);
       setTodos(todosTemp);
       const allTodosCompleted = todosTemp.every((todo) => todo.completed);
       setHasTodos(!allTodosCompleted);
@@ -55,9 +55,8 @@ const Todos = ({ userId, setHasTodos }) => {
   }, [userId, setHasTodos]);
 
   const markComplete = (id) => {
-    setTodos(
-      todos.map((todo) => {
-        console.log("todos", todos);
+    setTodos((prev) =>
+      prev.map((todo) => {
         if (todo.id === id) {
           return { ...todo, completed: true };
         }
@@ -68,22 +67,25 @@ const Todos = ({ userId, setHasTodos }) => {
 
   return (
     <ul>
-      {todos.map((todo) => (
-        <TodoItem key={todo.id}>
-          <TodoText>
-            {todo}
-            <br />
-          </TodoText>
-          <TodoStatus completed={!!todo.completed}>
-            {todo.completed ? "Completed" : "Not completed"}
-          </TodoStatus>
-          {!todo.completed && (
-            <CompleteButton onClick={() => markComplete(todo.id)}>
-              Mark Complete
-            </CompleteButton>
-          )}
-        </TodoItem>
-      ))}
+      {todos.map((todo) => {
+        const { id, title, completed } = todo || {};
+        return (
+          <TodoItem key={id}>
+            <TodoText>
+              {title}
+              <br />
+            </TodoText>
+            <TodoStatus completed={completed}>
+              {completed ? "Completed" : "Not completed"}
+            </TodoStatus>
+            {!completed && (
+              <CompleteButton onClick={() => markComplete(id)}>
+                Mark Complete
+              </CompleteButton>
+            )}
+          </TodoItem>
+        );
+      })}
     </ul>
   );
 };
