@@ -7,6 +7,7 @@ import USERS_URL from "./Users";
 
 const SingleUser = ({
   user,
+  setUsers,
   currentUsersData,
   onChangeField,
   showMoreData,

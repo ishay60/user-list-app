@@ -37,7 +37,13 @@ const CompleteButton = styled.button`
   background-color: #4caf50;
 `;
 
-const Todos = ({ todos, setTodos, markComplete }) => {
+const Todos = ({
+  todos,
+  setTodos,
+  markComplete,
+  selectedUserTodos,
+  setSelectedUserTodos,
+}) => {
   console.log("todos", todos);
 
   return (
@@ -54,7 +60,11 @@ const Todos = ({ todos, setTodos, markComplete }) => {
               {completed ? "Completed" : "Not completed"}
             </TodoStatus>
             {!completed && (
-              <CompleteButton onClick={() => markComplete(id)}>
+              <CompleteButton
+                onClick={() =>
+                  markComplete(id, selectedUserTodos, setSelectedUserTodos)
+                }
+              >
                 Mark Complete
               </CompleteButton>
             )}

@@ -16,7 +16,7 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [hasTodos, setHasTodos] = useState(false);
   const [showMoreData, setShowMoreData] = useState({});
-  const [todos, setTodos] = useState([{}]);
+  const [todos, setTodos] = useState([]);
   const [currentUsersData, setCurrentUsersData] = useState({});
   const [selectedUserTodos, setSelectedUserTodos] = useState([]);
 
@@ -32,7 +32,6 @@ const Users = () => {
   const closeOtherUsers = (userId) => {
     timeoutId = setTimeout(() => {
       setShowMoreData((prev) => {
-        console.log({ prev, userId });
         if (prev?.[userId]) {
           return prev;
         }
@@ -41,8 +40,11 @@ const Users = () => {
     }, 0);
   };
   const fetchUserTodos = async (userId) => {
-    const { data: todos } = await getUserItems(TODOS_URL, userId);
-    setSelectedUserTodos(todos);
+    const { data: userTodos } = await getUserItems(TODOS_URL, userId);
+    setTodos((prevTodos) => ({
+      ...prevTodos,
+      [userId]: userTodos,
+    }));
   };
 
   useEffect(() => {
@@ -65,7 +67,9 @@ const Users = () => {
   const filteredUsers = users.filter((user) =>
     user?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase())
   );
-  const markComplete = (id) => {
+
+  const markComplete = (id, selectedUserTodos, setSelectedUserTodos) => {
+    console.log("selectedUserTodos", selectedUserTodos);
     setSelectedUserTodos(
       selectedUserTodos.map((todo) => {
         if (todo.id === id) {
@@ -89,6 +93,7 @@ const Users = () => {
               <>
                 <SingleUser
                   user={user}
+                  setUsers={setUsers}
                   key={user.id}
                   currentUsersData={currentUsersData[user.id]}
                   onChangeField={onChangeField}
@@ -108,8 +113,10 @@ const Users = () => {
             <Todos
               userId={selectedUser}
               setHasTodos={setHasTodos}
-              todos={selectedUserTodos}
+              todos={todos[selectedUser] || []}
               markComplete={markComplete}
+              selectedUserTodos={selectedUserTodos}
+              setSelectedUserTodos={setSelectedUserTodos}
             />
           )}
           {selectedUser && <Posts userId={selectedUser} />}
