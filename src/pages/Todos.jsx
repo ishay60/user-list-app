@@ -37,15 +37,7 @@ const CompleteButton = styled.button`
   background-color: #4caf50;
 `;
 
-const Todos = ({
-  todos,
-  setTodos,
-  markComplete,
-  selectedUserTodos,
-  setSelectedUserTodos,
-}) => {
-  console.log("todos", todos);
-
+const Todos = ({ todos, markComplete }) => {
   return (
     <ul>
       {todos.map((todo) => {
@@ -62,7 +54,13 @@ const Todos = ({
             {!completed && (
               <CompleteButton
                 onClick={() =>
-                  markComplete(id, selectedUserTodos, setSelectedUserTodos)
+                  markComplete(
+                    id
+                    // todos,
+                    // setTodos,
+                    // selectedUserTodos,
+                    // setSelectedUserTodos
+                  )
                 }
               >
                 Mark Complete

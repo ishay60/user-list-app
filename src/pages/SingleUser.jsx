@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import UserForm from "../components/UserForm";
 import { updateUser, deleteItem } from "../services/api";
@@ -7,6 +7,7 @@ import USERS_URL from "./Users";
 
 const SingleUser = ({
   user,
+  users,
   setUsers,
   currentUsersData,
   onChangeField,

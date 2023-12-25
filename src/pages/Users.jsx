@@ -15,10 +15,10 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [hasTodos, setHasTodos] = useState(false);
-  const [showMoreData, setShowMoreData] = useState({});
-  const [todos, setTodos] = useState([]);
-  const [currentUsersData, setCurrentUsersData] = useState({});
   const [selectedUserTodos, setSelectedUserTodos] = useState([]);
+  const [showMoreData, setShowMoreData] = useState({});
+  const [todos, setTodos] = useState({});
+  const [currentUsersData, setCurrentUsersData] = useState({});
 
   const onChangeField = (userId, field, value) => {
     setCurrentUsersData((prev) => ({
@@ -51,36 +51,65 @@ const Users = () => {
     const fetchData = async () => {
       const { data } = await getAll(USERS_URL);
       setUsers(data);
+      data.forEach((user) => fetchUserTodos(user.id));
       setCurrentUsersData(
         data.reduce((acc, user) => {
           acc[user.id] = user;
           return acc;
         }, {})
       );
-      if (selectedUser) {
-        fetchUserTodos(selectedUser);
-      }
     };
     fetchData();
-  }, [selectedUser]);
+  }, []);
 
   const filteredUsers = users.filter((user) =>
     user?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase())
   );
 
-  const markComplete = (id, selectedUserTodos, setSelectedUserTodos) => {
-    console.log("selectedUserTodos", selectedUserTodos);
-    setSelectedUserTodos(
-      selectedUserTodos.map((todo) => {
+  // const markComplete = (id, selectedUserTodos, setSelectedUserTodos) => {
+  //   console.log("selectedUserTodos", selectedUserTodos);
+  //   setSelectedUserTodos(
+  //     selectedUserTodos.map((todo) => {
+  //       if (todo.id === id) {
+  //         return {
+  //           ...todo,
+  //           completed: !todo.completed,
+  //         };
+  //       }
+  //       return todo;
+  //     })
+  //   );
+  // };
+
+  const alsoCanMarkAsCompleted = (id) => {
+    setTodos((prev) => {
+      const updatedTodos = [...prev];
+      return updatedTodos.map((todo) => {
+        if (todo.id === id) {
+          todo.completed = true;
+        }
+        return todo;
+      });
+    });
+  };
+
+  // THIS IS WRITTTEN TREATING todos AS AN Array
+  // Should be rewritten to treat it as an object with key: 'user_id'  value: [todos]
+
+  const markComplete = (id) => {
+    setTodos((prevTodos) => {
+      const targetUserTodos = prevTodos[selectedUser];
+      const todos = targetUserTodos.map((todo) => {
         if (todo.id === id) {
           return {
             ...todo,
-            completed: !todo.completed,
+            completed: true,
           };
         }
         return todo;
-      })
-    );
+      });
+      return { ...prevTodos, [selectedUser]: todos };
+    });
   };
   return (
     <>
@@ -89,10 +118,14 @@ const Users = () => {
           <SearchBar handleSearch={setSearchTerm} />
 
           {filteredUsers.map((user) => (
-            <UserItem key={user.id}>
+            <UserItem
+              key={user.id}
+              onMouseEnter={() => setSelectedUser(user.id)}
+            >
               <>
                 <SingleUser
                   user={user}
+                  users={users}
                   setUsers={setUsers}
                   key={user.id}
                   currentUsersData={currentUsersData[user.id]}
